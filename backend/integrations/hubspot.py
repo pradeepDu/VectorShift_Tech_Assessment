@@ -9,7 +9,7 @@ import asyncio
 from integrations.integration_item import IntegrationItem
 from redis_client import add_key_value_redis, get_value_redis, delete_key_redis
 
-CLIENT_ID = os.getenv('HUBSPOT_CLIENT_ID')   # loading into env
+CLIENT_ID = os.getenv('HUBSPOT_CLIENT_ID')   # loading from env
 CLIENT_SECRET = os.getenv('HUBSPOT_CLIENT_SECRET')
 REDIRECT_URI = os.getenv('HUBSPOT_REDIRECT_URI', 'http://localhost:8000/integrations/hubspot/oauth2callback')
 # Minimal scope for reading contacts only
@@ -24,7 +24,6 @@ authorization_url = (
     f'&response_type=code'
     f'&redirect_uri={quote_plus(REDIRECT_URI)}'
 )
-
 # Only add scope if it's not empty
 if SCOPE:
     authorization_url += f'&scope={quote_plus(SCOPE)}'
@@ -38,16 +37,6 @@ async def authorize_hubspot(user_id, org_id):
     encoded_state = json.dumps(state_data)
     await add_key_value_redis(f'hubspot_state:{org_id}:{user_id}', encoded_state, expire=600)
     
-    # Build the complete authorization URL with proper encoding
-    auth_url = f'{authorization_url}&state={quote_plus(encoded_state)}'
-    
-    # Debug logging
-    print(f"DEBUG - CLIENT_ID: {CLIENT_ID}")
-    print(f"DEBUG - REDIRECT_URI: {REDIRECT_URI}")
-    print(f"DEBUG - SCOPE: '{SCOPE}'")
-    print(f"DEBUG - Full Authorization URL: {auth_url}")
-    
-    return auth_url
 
 async def oauth2callback_hubspot(request: Request):
     if request.query_params.get('error'):
@@ -56,9 +45,7 @@ async def oauth2callback_hubspot(request: Request):
     code = request.query_params.get('code')
     encoded_state = request.query_params.get('state')
     
-    # Debug logging
-    print(f"DEBUG - Received code: {code}")
-    print(f"DEBUG - Received encoded_state: {encoded_state}")
+   
     
     try:
         # URL decode the state first, then parse as JSON
@@ -85,9 +72,6 @@ async def oauth2callback_hubspot(request: Request):
         'redirect_uri': REDIRECT_URI,  # NOT encoded for token exchange
         'code': code,
     }
-
-    # Debug logging for token exchange
-    print(f"DEBUG - Token exchange data: {data}")
     
     async with httpx.AsyncClient() as client:
         token_resp, _ = await asyncio.gather(

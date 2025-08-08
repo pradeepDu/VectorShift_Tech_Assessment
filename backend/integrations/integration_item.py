@@ -1,6 +1,5 @@
 from datetime import datetime
 from typing import Optional, List
-
 class IntegrationItem:
     def __init__(
         self,
@@ -18,6 +17,7 @@ class IntegrationItem:
         delta: Optional[str] = None,
         drive_id: Optional[str] = None,
         visibility: Optional[bool] = True,
+        metadata: Optional[dict] = None,
     ):
         self.id = id
         self.type = type
@@ -33,3 +33,24 @@ class IntegrationItem:
         self.delta = delta
         self.drive_id = drive_id
         self.visibility = visibility
+        self.metadata = metadata
+
+    def to_dict(self):
+        """Convert IntegrationItem to a dictionary for JSON serialization"""
+        return {
+            'id': self.id,
+            'type': self.type,
+            'directory': self.directory,
+            'parent_path_or_name': self.parent_path_or_name,
+            'parent_id': self.parent_id,
+            'name': self.name,
+            'creation_time': self.creation_time.isoformat() if isinstance(self.creation_time, datetime) else self.creation_time,
+            'last_modified_time': self.last_modified_time.isoformat() if isinstance(self.last_modified_time, datetime) else self.last_modified_time,
+            'url': self.url,
+            'children': self.children,
+            'mime_type': self.mime_type,
+            'delta': self.delta,
+            'drive_id': self.drive_id,
+            'visibility': self.visibility,
+            'metadata': self.metadata,
+        }
