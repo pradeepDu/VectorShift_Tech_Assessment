@@ -1,60 +1,62 @@
 import { useState } from 'react';
 import {
     Box,
-    Autocomplete,
     TextField,
+    Button,
 } from '@mui/material';
-import { AirtableIntegration } from './integrations/airtable';
-import { NotionIntegration } from './integrations/notion';
-import { HubSpotIntegration } from './integrations/hubspot';
-import { DataForm } from './data-form';
+import axios from 'axios';
 
-const integrationMapping = {
-    'Notion': NotionIntegration,
-    'Airtable': AirtableIntegration,
-    'HubSpot': HubSpotIntegration,
+const endpointMapping = {
+    'Notion': 'notion',
+    'Airtable': 'airtable',
+    'HubSpot': 'hubspot',
 };
 
-export const IntegrationForm = () => {
-    const [integrationParams, setIntegrationParams] = useState({});
-    const [user, setUser] = useState('TestUser');
-    const [org, setOrg] = useState('TestOrg');
-    const [currType, setCurrType] = useState(null);
-    const CurrIntegration = integrationMapping[currType];
+export const DataForm = ({ integrationType, credentials }) => {
+    const [loadedData, setLoadedData] = useState(null);
+    const endpoint = endpointMapping[integrationType];
 
-  return (
-    <Box display='flex' justifyContent='center' alignItems='center' flexDirection='column' sx={{ width: '100%' }}>
-        <Box display='flex' flexDirection='column'>
-        <TextField
-            label="User"
-            value={user}
-            onChange={(e) => setUser(e.target.value)}
-            sx={{mt: 2}}
-        />
-        <TextField
-            label="Organization"
-            value={org}
-            onChange={(e) => setOrg(e.target.value)}
-            sx={{mt: 2}}
-        />
-        <Autocomplete
-            id="integration-type"
-            options={Object.keys(integrationMapping)}
-            sx={{ width: 300, mt: 2 }}
-            renderInput={(params) => <TextField {...params} label="Integration Type" />}
-            onChange={(e, value) => setCurrType(value)}
-        />
-        </Box>
-        {currType && 
-        <Box>
-            <CurrIntegration user={user} org={org} integrationParams={integrationParams} setIntegrationParams={setIntegrationParams} />
-        </Box>
+    const handleLoad = async () => {
+        try {
+            const formData = new FormData();
+            formData.append('credentials', JSON.stringify(credentials));
+            const response = await axios.post(`http://localhost:8000/integrations/${endpoint}/load`, formData);
+            const data = response.data;
+            // Convert objects to readable JSON string
+            setLoadedData(JSON.stringify(data, null, 2));
+        } catch (e) {
+            alert(e?.response?.data?.detail);
         }
-        {integrationParams?.credentials && 
-        <Box sx={{mt: 2}}>
-            <DataForm integrationType={integrationParams?.type} credentials={integrationParams?.credentials} />
+    }
+
+    return (
+        <Box display='flex' justifyContent='center' alignItems='center' flexDirection='column' width='100%'>
+            <Box display='flex' flexDirection='column' width='100%'>
+                <TextField
+                    label="Loaded Data"
+                    value={loadedData || ''}
+                    sx={{mt: 2}}
+                    InputLabelProps={{ shrink: true }}
+                    disabled
+                    multiline
+                    rows={10}
+                    fullWidth
+                />
+                <Button
+                    onClick={handleLoad}
+                    sx={{mt: 2}}
+                    variant='contained'
+                >
+                    Load Data
+                </Button>
+                <Button
+                    onClick={() => setLoadedData(null)}
+                    sx={{mt: 1}}
+                    variant='contained'
+                >
+                    Clear Data
+                </Button>
+            </Box>
         </Box>
-        }
-    </Box>
-  );
+    );
 }

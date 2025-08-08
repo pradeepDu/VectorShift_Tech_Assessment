@@ -12,8 +12,8 @@ from redis_client import add_key_value_redis, get_value_redis, delete_key_redis
 CLIENT_ID = os.getenv('HUBSPOT_CLIENT_ID')   # loading from env
 CLIENT_SECRET = os.getenv('HUBSPOT_CLIENT_SECRET')
 REDIRECT_URI = os.getenv('HUBSPOT_REDIRECT_URI', 'http://localhost:8000/integrations/hubspot/oauth2callback')
-# Minimal scope for reading contacts only
-SCOPE = 'crm.objects.contacts.read'
+
+SCOPE = 'crm.objects.contacts.read' #read just the contacts in the crm section
 
 AUTH_BASE = 'https://app.hubspot.com/oauth/authorize'
 TOKEN_URL = 'https://api.hubapi.com/oauth/v1/token'
@@ -36,8 +36,17 @@ async def authorize_hubspot(user_id, org_id):
     }
     encoded_state = json.dumps(state_data)
     await add_key_value_redis(f'hubspot_state:{org_id}:{user_id}', encoded_state, expire=600)
-    
 
+    # Add state to the authorization URL
+    from urllib.parse import quote_plus
+    url_with_state = (
+        f'{AUTH_BASE}?client_id={CLIENT_ID}'
+        f'&response_type=code'
+        f'&redirect_uri={quote_plus(REDIRECT_URI)}'
+        f'&scope={quote_plus(SCOPE)}'
+        f'&state={quote_plus(encoded_state)}'
+    )
+    return url_with_state
 async def oauth2callback_hubspot(request: Request):
     if request.query_params.get('error'):
         raise HTTPException(status_code=400, detail=request.query_params.get('error'))
@@ -45,16 +54,14 @@ async def oauth2callback_hubspot(request: Request):
     code = request.query_params.get('code')
     encoded_state = request.query_params.get('state')
     
-   
-    
     try:
         # URL decode the state first, then parse as JSON
         from urllib.parse import unquote_plus
         decoded_state = unquote_plus(encoded_state)
-        print(f"DEBUG - Decoded state: {decoded_state}")
+        #print(f"DEBUG - Decoded state: {decoded_state}")
         state_data = json.loads(decoded_state)
     except Exception as e:
-        print(f"DEBUG - State parsing error: {e}")
+        #print(f"DEBUG - State parsing error: {e}")
         raise HTTPException(status_code=400, detail=f'Invalid state payload: {e}')
 
     user_id = state_data.get('user_id')
