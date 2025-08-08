@@ -43,7 +43,7 @@ async def get_airtable_credentials_integration(user_id: str = Form(...), org_id:
 
 @app.post('/integrations/airtable/load')
 async def get_airtable_items(credentials: str = Form(...)):
-    items = await get_items_airtable(credentials)
+    items = await get_items_airtable(credentials)                      # storing in dict for better json response
     return [item.to_dict() for item in items]
 
 
@@ -62,7 +62,7 @@ async def get_notion_credentials_integration(user_id: str = Form(...), org_id: s
 
 @app.post('/integrations/notion/load')
 async def get_notion_items(credentials: str = Form(...)):
-    items = await get_items_notion(credentials)
+    items = await get_items_notion(credentials)              # storing in dict for better json response
     return [item.to_dict() for item in items]
 
 # HubSpot
@@ -81,4 +81,4 @@ async def get_hubspot_credentials_integration(user_id: str = Form(...), org_id: 
 @app.post('/integrations/hubspot/load')
 async def get_hubspot_items_integration(credentials: str = Form(...)):
     items = await get_items_hubspot(credentials)
-    return [item.to_dict() for item in items]
+    return [item.to_dict() for item in items]                                  # storing in dict for better json response
