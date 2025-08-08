@@ -1,0 +1,167 @@
+# ==============================
+# OS / Editor / General
+# ==============================
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.swp
+*.swo
+*.bak
+*.old
+ehthumbs.db
+desktop.ini
+
+# ==============================
+# Node.js
+# ==============================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log
+
+# ==============================
+# Python
+# ==============================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+dist/
+build/
+.env
+.venv/
+env/
+venv/
+
+# ==============================
+# Java
+# ==============================
+*.class
+*.jar
+*.war
+*.ear
+target/
+build/
+
+# ==============================
+# C / C++
+# ==============================
+*.o
+*.obj
+*.exe
+*.out
+*.dll
+*.so
+*.a
+
+# ==============================
+# VS Code / JetBrains / IDEs
+# ==============================
+.vscode/
+.idea/
+*.iml
+*.sublime-workspace
+*.sublime-project
+
+# ==============================
+# macOS / Linux / Windows
+# ==============================
+*.DS_Store
+*.Trash-*
+*~
+.nfs*
+Icon?
+ehthumbs.db
+
+# ==============================
+# Logs and Dumps
+# ==============================
+*.log
+*.sql
+*.sqlite
+*.sqlite3
+*.pid
+*.seed
+
+# ==============================
+# Environment / Secrets
+# ==============================
+.env
+.env.*
+.envrc
+.secret
+secrets.yml
+credentials.json
+
+# ==============================
+# Package managers
+# ==============================
+package-lock.json
+yarn.lock
+.pnpm-store/
+
+# ==============================
+# Rust
+# ==============================
+target/
+Cargo.lock
+
+# ==============================
+# Go
+# ==============================
+*.exe
+*.test
+*.out
+vendor/
+
+# ==============================
+# Flutter / Dart
+# ==============================
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+build/
+.idea/
+
+# ==============================
+# Jupyter / Data Science
+# ==============================
+.ipynb_checkpoints
+*.h5
+*.hdf5
+*.csv
+*.tsv
+*.pkl
+*.joblib
+*.npy
+
+# ==============================
+# Android Studio
+# ==============================
+*.apk
+*.ap_
+*.dex
+*.class
+build/
+captures/
+.gradle/
+local.properties
+
+# ==============================
+# Others
+# ==============================
+coverage/
+htmlcov/
+*.cover
+*.coverage
+*.gcov
+*.gcda
+*.gcno
+*.orig
+
