@@ -46,7 +46,6 @@ async def get_airtable_items(credentials: str = Form(...)):
     items = await get_items_airtable(credentials)                      # storing in dict for better json response
     return [item.to_dict() for item in items]
 
-
 # Notion
 @app.post('/integrations/notion/authorize')
 async def authorize_notion_integration(user_id: str = Form(...), org_id: str = Form(...)):
